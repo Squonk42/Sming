@@ -50,10 +50,14 @@ void wsMessageReceived(WebSocket& socket, const String& message)
 	socket.sendString(response);
 }
 
+void wsBinaryReceived(WebSocket& socket, uint8_t* data, size_t size)
+{
+	Serial.printf("Websocket binary data recieved, size: %d\r\n", size);
+}
+
 void wsDisconnected(WebSocket& socket)
 {
 	totalActiveSockets--;
-
 
 	// Notify everybody about lost connection
 	WebSocketsList &clients = server.getActiveWebSockets();
@@ -71,6 +75,7 @@ void startWebServer()
 	server.enableWebSockets(true);
 	server.setWebSocketConnectionHandler(wsConnected);
 	server.setWebSocketMessageHandler(wsMessageReceived);
+	server.setWebSocketBinaryHandler(wsBinaryReceived);
 	server.setWebSocketDisconnectionHandler(wsDisconnected);
 
 	Serial.println("\r\n=== WEB SERVER STARTED ===");
